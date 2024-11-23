@@ -87,41 +87,6 @@ int main() {
                 return 1;
         }
 
-        cout << "\nPilih lokasi Anda:\n";
-        cout << "1. Karawang Barat\n"
-             << "2. Karawang Timur\n"
-             << "3. Cikampek\n"
-             << "4. Telukjambe\n"
-             << "5. Cilamaya Kulon\n"
-             << "6. Cilamaya Wetan\n"
-             << "7. Klari\n"
-             << "8. Batujaya\n"
-             << "9. Tempuran\n"
-             << "10. Rengasdengklok\n"
-             << "11. Tirtajaya\n"
-             << "12. Jatisari\n"
-             << "13. Pakisjaya\n"
-             << "14. Banyusari\n"
-             << "15. Purwasari\n"
-             << "16. Pedes\n"
-             << "17. Rawamerta\n"
-             << "18. Jayakerta\n"
-             << "19. Kutawaluya\n"
-             << "20. Lemahabang\n"
-             << "21. Cibuaya\n"
-             << "22. Pangkalan\n"
-             << "23. Tegalwaru\n"
-             << "24. Majalaya\n";
-        cout << "Pilihan Anda (1-24): ";
-        cin >> pilihan_lokasi;
-
-        if (pilihan_lokasi < 1 || pilihan_lokasi > 24) {
-            cout << "Pilihan tidak valid!\n";
-            return 1;
-        }
-
-        animasi_loading("\nDriver sedang menuju tempat Anda");
-
         cout << "\nDriver telah tiba! Masukkan berat laundry Anda (kg): ";
         cin >> berat;
 
@@ -148,55 +113,96 @@ int main() {
         cout << "\n=== Ringkasan Pesanan ===\n";
         cout << "ID Membership: " << id_membership << endl;
         cout << "Berat Laundry: " << berat << " kg\n";
-        cout << "Jenis Layanan: "
-             << ((pilihan_layanan == 1) ? "Cuci Saja" :
-                 (pilihan_layanan == 2) ? "Cuci + Setrika" : "Setrika + Lipat") << endl;
-        cout << "Mode Layanan: "
-             << ((mode_layanan == 1) ? "Kilat" :
-                 (mode_layanan == 2) ? "Express" : "Reguler") << endl;
-        cout << "Estimasi Waktu Selesai: " << estimasi_waktu << endl;
         cout << "Total Harga: Rp " << total_harga << endl;
-
-        cout << "\nTerima kasih telah menggunakan layanan kami!\n";
-
     } else if (pilihan_layanan == 2) {
         // Layanan Laundry Offline (Self-Service)
-        int jumlah_uang, jumlah_koin, sisa_uang;
-        cout << "\n=== Layanan Laundry Offline (Self-Service) ===\n";
-        cout << "Masukkan jumlah uang Anda (dalam Rupiah): ";
-        cin >> jumlah_uang;
+        string punya_koin;
+        cout << "\nApakah Anda sudah punya koin untuk menjalankan mesin laundry? (y/n): ";
+        cin >> punya_koin;
 
-        jumlah_koin = jumlah_uang / harga_koin;
-        sisa_uang = jumlah_uang % harga_koin;
+        if (punya_koin == "y" || punya_koin == "Y") {
+            cout << "Untuk menggunakan mesin ini, silahkan scan QR code di mesin tersebut.\n";
+            cout << "Nama: " << nama_pengguna << ", silahkan input koin ke dalam mesin cuci.\n";
 
-        cout << "Anda mendapatkan " << jumlah_koin << " koin.\n";
-        cout << "Uang kembalian Anda: Rp " << sisa_uang << ", silahkan diambil kembali.\n";
+            int jumlah_koin;
+            cout << "Masukkan jumlah koin yang ingin digunakan: ";
+            cin >> jumlah_koin;
 
-        // Konfirmasi pengambilan uang kembalian
-        char konfirmasi_kembalian;
-        do {
-            cout << "Apakah uang kembalian telah diambil? (y/n): ";
-            cin >> konfirmasi_kembalian;
-            if (konfirmasi_kembalian == 'n' || konfirmasi_kembalian == 'N') {
-                cout << "Silakan ambil uang kembalian Anda terlebih dahulu.\n";
+            animasi_loading("Sedang menghitung koin");
+
+            cout << "Penggunaan mesin cuci: " << jumlah_koin << " kali.\n";
+
+            // Menambahkan fitur setrika + lipat
+            char setrika_pilihan;
+            cout << "Apakah Anda ingin pakaian Anda disetrika + dilipat? (y/n): ";
+            cin >> setrika_pilihan;
+
+            if (setrika_pilihan == 'y' || setrika_pilihan == 'Y') {
+                int berat_setrika;
+                cout << "Masukkan berat pakaian untuk disetrika + dilipat (kg): ";
+                cin >> berat_setrika;
+
+                int total_biaya_setrika = berat_setrika * biaya_setrika_lipat_per_kg;
+                cout << "Biaya tambahan untuk setrika + lipat: Rp " << total_biaya_setrika << endl;
             }
-        } while (konfirmasi_kembalian != 'y' && konfirmasi_kembalian != 'Y');
+        } else if (punya_koin == "n" || punya_koin == "N") {
+            int jumlah_uang, jumlah_koin, sisa_uang;
 
-        // Opsi setrika + lipat
-        char setrika_pilihan;
-        cout << "Apakah Anda ingin pakaian Anda disetrika + dilipat? (y/n): ";
-        cin >> setrika_pilihan;
+            // Input uang untuk membeli koin
+            do {
+                cout << "Masukkan jumlah uang Anda (minimal Rp 4000): ";
+                cin >> jumlah_uang;
 
-        if (setrika_pilihan == 'y' || setrika_pilihan == 'Y') {
-            int berat_setrika;
-            cout << "Masukkan berat pakaian untuk disetrika + dilipat (kg): ";
-            cin >> berat_setrika;
+                if (jumlah_uang < harga_koin) {
+                    cout << "Jumlah uang tidak cukup untuk membeli koin. Silakan masukkan minimal Rp 4000.\n";
+                }
+            } while (jumlah_uang < harga_koin);
 
-            int total_biaya_setrika = berat_setrika * biaya_setrika_lipat_per_kg;
-            cout << "Biaya tambahan untuk setrika + lipat: Rp " << total_biaya_setrika << endl;
+            // Menghitung jumlah koin dan kembalian
+            jumlah_koin = jumlah_uang / harga_koin;
+            sisa_uang = jumlah_uang % harga_koin;
+
+            cout << "Anda mendapatkan " << jumlah_koin << " koin.\n";
+            if (sisa_uang > 0) {
+                cout << "Uang kembalian Anda: Rp " << sisa_uang << ", silahkan diambil kembali.\n";
+            }
+
+            char konfirmasi_kembalian;
+            do {
+                cout << "Apakah uang kembalian telah diambil? (y/n): ";
+                cin >> konfirmasi_kembalian;
+                if (konfirmasi_kembalian == 'n' || konfirmasi_kembalian == 'N') {
+                    cout << "Silakan ambil uang kembalian Anda terlebih dahulu.\n";
+                }
+            } while (konfirmasi_kembalian != 'y' && konfirmasi_kembalian != 'Y');
+
+            cout << "Untuk menggunakan mesin ini, silahkan scan QR code di mesin tersebut.\n";
+            cout << "Nama: " << nama_pengguna << ", silahkan input koin ke dalam mesin cuci.\n";
+
+            int jumlah_koin_input;
+            cout << "Masukkan jumlah koin yang ingin digunakan: ";
+            cin >> jumlah_koin_input;
+
+            animasi_loading("Sedang menghitung koin");
+
+            cout << "Penggunaan mesin cuci: " << jumlah_koin_input << " kali.\n";
+
+            // Menambahkan fitur setrika + lipat
+            char setrika_pilihan;
+            cout << "Apakah Anda ingin pakaian Anda disetrika + dilipat? (y/n): ";
+            cin >> setrika_pilihan;
+
+            if (setrika_pilihan == 'y' || setrika_pilihan == 'Y') {
+                int berat_setrika;
+                cout << "Masukkan berat pakaian untuk disetrika + dilipat (kg): ";
+                cin >> berat_setrika;
+
+                int total_biaya_setrika = berat_setrika * biaya_setrika_lipat_per_kg;
+                cout << "Biaya tambahan untuk setrika + lipat: Rp " << total_biaya_setrika << endl;
+            }
+        } else {
+            cout << "Pilihan tidak valid. Harap masukkan 'y' untuk Ya atau 'n' untuk Tidak.\n";
         }
-
-        cout << "Terima kasih telah menggunakan layanan kami!\n";
     } else {
         cout << "Pilihan tidak valid!\n";
     }
